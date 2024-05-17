@@ -6,9 +6,9 @@ const noteSchema = mongoose.Schema(
             type: String,
             required: [true, "Note title is mandatory"],
         },
-        content: {
+        description: {
             type: String,
-            required: [true, "Note Content is mandatory"],
+            required: [true, "Note description is mandatory"],
         },
         hashtags: {
             type: Array,
