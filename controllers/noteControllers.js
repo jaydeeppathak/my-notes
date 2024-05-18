@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Note = require("../models/noteModel");
+const checkIfIdIsValid = require("../helpers/utils");
 
 // @desc all notes
 // @route GET /api/notes
@@ -14,6 +15,14 @@ const getNotes = asyncHandler(async (req, res) => {
 // @access private
 const getNoteDetails = asyncHandler(async (req, res) => {
     const noteId = req.params.id;
+
+    if (!checkIfIdIsValid(noteId)) {
+        res.status(401).json({
+            success: false,
+            message: "Note with given id not found",
+        });
+    }
+
     const note = await Note.findOne({ _id: noteId });
     console.log("adasdas :>> ", note);
     if (!note) {
