@@ -7,7 +7,7 @@ const checkIfIdIsValid = require("../helpers/utils");
 // @access private
 const getNotes = asyncHandler(async (req, res) => {
     const notes = await Note.find();
-    res.status(200).json({ success: true, data: notes });
+    res.sendSuccess(notes);
 });
 
 // @desc note
@@ -21,18 +21,18 @@ const getNoteDetails = asyncHandler(async (req, res) => {
             success: false,
             message: "Note with given id not found",
         });
+        const error = new Error("Note with given id not found");
+        res.sendError(error, 401);
     }
 
     const note = await Note.findOne({ _id: noteId });
     console.log("adasdas :>> ", note);
     if (!note) {
-        res.status(404).json({
-            success: false,
-            message: "Note with given id not found",
-        });
+        const error = new Error("Note with given id not found");
+        res.sendError(error, 404);
     }
 
-    res.status(200).json({ success: true, data: note });
+    res.sendSuccess(note);
 });
 
 // @desc Create a new note
@@ -41,14 +41,12 @@ const getNoteDetails = asyncHandler(async (req, res) => {
 const createNote = asyncHandler(async (req, res) => {
     const { title, description, hashtags = [] } = req.body;
     if (!title || !description) {
-        res.status(400).json({
-            success: false,
-            message: "Title and description are mandatory",
-        });
+        const error = new Error("Title and description are mandatory");
+        res.sendError(error, 400);
     }
 
     const note = await Note.create({ title, description, hashtags });
-    res.status(200).json({ success: true, data: note });
+    res.sendSuccess(note, "Note created successfully");
 });
 
 // @desc Update a new note
@@ -56,13 +54,17 @@ const createNote = asyncHandler(async (req, res) => {
 // @access private
 const updateNote = asyncHandler(async (req, res) => {
     const noteId = req.params.id;
+
+    if (!checkIfIdIsValid(noteId)) {
+        const error = new Error("Note with given id not found");
+        res.sendError(error, 401);
+    }
+
     const { title, description, hashtags = [] } = req.body;
     const existingNote = await Note.findOne({ _id: noteId });
     if (!existingNote) {
-        res.status(404).json({
-            success: false,
-            message: "Note with given id not found",
-        });
+        const error = new Error("Note with given id not found");
+        res.sendError(error, 404);
     }
 
     const note = { title, description, hashtags };
@@ -70,7 +72,7 @@ const updateNote = asyncHandler(async (req, res) => {
         new: true,
     });
     console.log("updatedNote :>> ", updatedNote);
-    res.status(200).json({ success: true, data: updatedNote });
+    res.sendSuccess(updatedNote, "Note updated successfully");
 });
 
 // @desc Delete a new note
@@ -79,22 +81,24 @@ const updateNote = asyncHandler(async (req, res) => {
 const deleteNote = asyncHandler(async (req, res) => {
     const noteId = req.params.id;
 
+    if (!checkIfIdIsValid(noteId)) {
+        const error = new Error("Note with given id not found");
+        res.sendError(error, 401);
+    }
+
     const existingNote = await Note.findOne({ _id: noteId });
     if (!existingNote) {
-        res.status(404).json({
-            success: false,
-            message: "Note with given id not found",
-        });
+        const error = new Error("Note with given id not found");
+        res.sendError(error, 404);
     }
 
     const result = await Note.deleteOne({ _id: noteId });
     if (result.acknowledged) {
         res.status(200).json({ success: true, data: existingNote });
+        res.sendSuccess(existingNote);
     } else {
-        res.status(500).json({
-            success: false,
-            message: "Something went wrong",
-        });
+        const error = new Error("Something went wrong");
+        res.sendError(error, 500);
     }
 });
 
