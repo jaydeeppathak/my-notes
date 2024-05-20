@@ -22,5 +22,4 @@ app.use("/api/users", userRoutes);
 //     console.log(`Listeing on port ${port}`);
 // });
 
-app.use("/.netlify/functions/api", router);
 export const handler = serverless(app);
