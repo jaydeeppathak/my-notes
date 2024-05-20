@@ -26,7 +26,6 @@ const getNoteDetails = asyncHandler(async (req, res) => {
     }
 
     const note = await Note.findOne({ _id: noteId });
-    console.log("adasdas :>> ", note);
     if (!note) {
         const error = new Error("Note with given id not found");
         res.sendError(error, 404);
@@ -71,7 +70,6 @@ const updateNote = asyncHandler(async (req, res) => {
     const updatedNote = await Note.findByIdAndUpdate({ _id: noteId }, note, {
         new: true,
     });
-    console.log("updatedNote :>> ", updatedNote);
     res.sendSuccess(updatedNote, "Note updated successfully");
 });
 

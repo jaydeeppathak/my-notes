@@ -13,6 +13,7 @@ const responseFormatter = (req, res, next) => {
             message: error.message || "Something went wrong",
             details: error.details || null,
         });
+        return;
     };
 
     next();
