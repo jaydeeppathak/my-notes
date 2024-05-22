@@ -6,7 +6,8 @@ const checkIfIdIsValid = require("../helpers/utils");
 // @route GET /api/notes
 // @access private
 const getNotes = asyncHandler(async (req, res) => {
-    const notes = await Note.find();
+    console.log("req.user :>> ", req.user);
+    const notes = await Note.find({ userId: req.user.id });
     res.sendSuccess(notes);
 });
 
@@ -25,7 +26,7 @@ const getNoteDetails = asyncHandler(async (req, res) => {
         res.sendError(error, 401);
     }
 
-    const note = await Note.findOne({ _id: noteId });
+    const note = await Note.findOne({ _id: noteId, userId: req.user.id });
     if (!note) {
         const error = new Error("Note with given id not found");
         res.sendError(error, 404);
@@ -44,7 +45,12 @@ const createNote = asyncHandler(async (req, res) => {
         res.sendError(error, 400);
     }
 
-    const note = await Note.create({ title, description, hashtags });
+    const note = await Note.create({
+        title,
+        description,
+        hashtags,
+        userId: req.user.id,
+    });
     res.sendSuccess(note, "Note created successfully");
 });
 
@@ -60,13 +66,16 @@ const updateNote = asyncHandler(async (req, res) => {
     }
 
     const { title, description, hashtags = [] } = req.body;
-    const existingNote = await Note.findOne({ _id: noteId });
+    const existingNote = await Note.findOne({
+        _id: noteId,
+        userId: req.user.id,
+    });
     if (!existingNote) {
         const error = new Error("Note with given id not found");
         res.sendError(error, 404);
     }
 
-    const note = { title, description, hashtags };
+    const note = { title, description, hashtags, userId: req.user.id };
     const updatedNote = await Note.findByIdAndUpdate({ _id: noteId }, note, {
         new: true,
     });
@@ -84,13 +93,16 @@ const deleteNote = asyncHandler(async (req, res) => {
         res.sendError(error, 401);
     }
 
-    const existingNote = await Note.findOne({ _id: noteId });
+    const existingNote = await Note.findOne({
+        _id: noteId,
+        userId: req.user.id,
+    });
     if (!existingNote) {
         const error = new Error("Note with given id not found");
         res.sendError(error, 404);
     }
 
-    const result = await Note.deleteOne({ _id: noteId });
+    const result = await Note.deleteOne({ _id: noteId, userId: req.user.id });
     if (result.acknowledged) {
         res.status(200).json({ success: true, data: existingNote });
         res.sendSuccess(existingNote);

@@ -7,8 +7,11 @@ const {
     updateNote,
     deleteNote,
 } = require("../controllers/noteControllers");
+const validateToken = require("../middleware/validateToken");
 
-router.get("/", getNotes);
+router.use(validateToken);
+
+router.get("/", validateToken, getNotes);
 
 router.get("/:id", getNoteDetails);
 
