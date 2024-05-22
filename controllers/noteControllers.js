@@ -24,12 +24,14 @@ const getNoteDetails = asyncHandler(async (req, res) => {
         });
         const error = new Error("Note with given id not found");
         res.sendError(error, 401);
+        return;
     }
 
     const note = await Note.findOne({ _id: noteId, userId: req.user.id });
     if (!note) {
         const error = new Error("Note with given id not found");
         res.sendError(error, 404);
+        return;
     }
 
     res.sendSuccess(note);
@@ -43,6 +45,7 @@ const createNote = asyncHandler(async (req, res) => {
     if (!title || !description) {
         const error = new Error("Title and description are mandatory");
         res.sendError(error, 400);
+        return;
     }
 
     const note = await Note.create({
@@ -63,6 +66,7 @@ const updateNote = asyncHandler(async (req, res) => {
     if (!checkIfIdIsValid(noteId)) {
         const error = new Error("Note with given id not found");
         res.sendError(error, 401);
+        return;
     }
 
     const { title, description, hashtags = [] } = req.body;
@@ -73,6 +77,7 @@ const updateNote = asyncHandler(async (req, res) => {
     if (!existingNote) {
         const error = new Error("Note with given id not found");
         res.sendError(error, 404);
+        return;
     }
 
     const note = { title, description, hashtags, userId: req.user.id };
@@ -91,6 +96,7 @@ const deleteNote = asyncHandler(async (req, res) => {
     if (!checkIfIdIsValid(noteId)) {
         const error = new Error("Note with given id not found");
         res.sendError(error, 401);
+        return;
     }
 
     const existingNote = await Note.findOne({
@@ -100,6 +106,7 @@ const deleteNote = asyncHandler(async (req, res) => {
     if (!existingNote) {
         const error = new Error("Note with given id not found");
         res.sendError(error, 404);
+        return;
     }
 
     const result = await Note.deleteOne({ _id: noteId, userId: req.user.id });
@@ -109,6 +116,7 @@ const deleteNote = asyncHandler(async (req, res) => {
     } else {
         const error = new Error("Something went wrong");
         res.sendError(error, 500);
+        return;
     }
 });
 
