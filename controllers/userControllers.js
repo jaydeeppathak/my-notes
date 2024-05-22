@@ -63,10 +63,10 @@ const loginUser = asyncHandler(async (req, res) => {
             },
             process.env.ACCESS_TOKEN_SECRET,
             {
-                expiresIn: "20m",
+                expiresIn: "24h",
             },
         );
-        res.sendSuccess(accessToken);
+        res.sendSuccess(accessToken, "Login user");
     } else {
         const error = new Error("Email or password is not valid");
         res.sendError(error, 401);
@@ -75,7 +75,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const currentUser = asyncHandler(async (req, res) => {
-    res.sendSuccess(req.user);
+    res.sendSuccess(req.user, "Current user");
 });
 
 module.exports = { registerUser, loginUser, currentUser };

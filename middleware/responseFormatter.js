@@ -1,9 +1,17 @@
-const winston = require("winston");
+const { createLogger, format, transports } = require("winston");
+const { combine, timestamp, printf } = format;
 
-const logger = winston.createLogger({
-    level: "error",
-    format: winston.format.json(),
-    transports: [new winston.transports.Console()],
+const myFormat = printf(({ level, message, timestamp }) => {
+    return `${timestamp}  ${level}: ${message}`;
+});
+
+const logger = createLogger({
+    level: "info",
+    format: combine(timestamp(), myFormat),
+    transports: [
+        new transports.Console(),
+        new transports.File({ filename: "app.log" }),
+    ],
 });
 const responseFormatter = (req, res, next) => {
     res.sendSuccess = (data, message = "Success") => {
@@ -16,7 +24,7 @@ const responseFormatter = (req, res, next) => {
     };
 
     res.sendError = (error, statusCode = 500) => {
-        logger.error(message);
+        logger.error(error.message);
         res.status(statusCode).json({
             success: false,
             message: error.message || "Something went wrong",

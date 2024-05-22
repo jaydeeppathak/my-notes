@@ -6,9 +6,8 @@ const checkIfIdIsValid = require("../helpers/utils");
 // @route GET /api/notes
 // @access private
 const getNotes = asyncHandler(async (req, res) => {
-    console.log("req.user :>> ", req.user);
     const notes = await Note.find({ userId: req.user.id });
-    res.sendSuccess(notes);
+    res.sendSuccess(notes, "Notes list");
 });
 
 // @desc note
@@ -34,7 +33,7 @@ const getNoteDetails = asyncHandler(async (req, res) => {
         return;
     }
 
-    res.sendSuccess(note);
+    res.sendSuccess(note, "Note details");
 });
 
 // @desc Create a new note
@@ -112,7 +111,7 @@ const deleteNote = asyncHandler(async (req, res) => {
     const result = await Note.deleteOne({ _id: noteId, userId: req.user.id });
     if (result.acknowledged) {
         res.status(200).json({ success: true, data: existingNote });
-        res.sendSuccess(existingNote);
+        res.sendSuccess(existingNote, "Note deleted successfully");
     } else {
         const error = new Error("Something went wrong");
         res.sendError(error, 500);
