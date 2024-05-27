@@ -15,6 +15,7 @@ app.use(cors());
 app.use(express.json());
 app.use(responseFormatter);
 
+app.options('*', cors())
 app.use("/api/notes", noteRoutes);
 app.use("/api/users", userRoutes);
 // app.use(errorHandler);
