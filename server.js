@@ -11,11 +11,15 @@ connectDb();
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(cors());
+const corsOptions = {
+    credentials: true,
+    origin: "https://rough-note.netlify.app",
+};
+
 app.use(express.json());
 app.use(responseFormatter);
 
-app.options('*', cors())
+app.use(cors(corsOptions));
 app.use("/api/notes", noteRoutes);
 app.use("/api/users", userRoutes);
 // app.use(errorHandler);
