@@ -1,22 +1,27 @@
 const express = require("express");
-const dotenv = require("dotenv").config();
+const serverless = require("serverless-http");
 const noteRoutes = require("../routes/noteRoutes");
 const userRoutes = require("../routes/userRoutes");
 const connectDb = require("../config/dbConnection");
-// const errorHandler = require("../middleware/errorHandler");
 const responseFormatter = require("../middleware/responseFormatter");
-const serverless = require("serverless-http");
+require("dotenv").config();
 
 connectDb();
 const app = express();
-const port = process.env.PORT || 5000;
-const router = express.Router();
+
+const corsOptions = {
+    credentials: true,
+    origin: "https://rough-note.netlify.app",
+};
 
 app.use(express.json());
 app.use(responseFormatter);
-app.get("/api/abcd", (req, res) => {
+
+app.use(cors(corsOptions));
+app.get("/api/hello", (req, res) => {
     res.json({ message: "hello" });
 });
+
 app.use("/api/notes", noteRoutes);
 app.use("/api/users", userRoutes);
 

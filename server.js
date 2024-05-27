@@ -4,7 +4,6 @@ const cors = require("cors");
 const noteRoutes = require("./routes/noteRoutes");
 const userRoutes = require("./routes/userRoutes");
 const connectDb = require("./config/dbConnection");
-// const errorHandler = require("./middleware/errorHandler");
 const responseFormatter = require("./middleware/responseFormatter");
 
 connectDb();
@@ -22,7 +21,6 @@ app.use(responseFormatter);
 app.use(cors(corsOptions));
 app.use("/api/notes", noteRoutes);
 app.use("/api/users", userRoutes);
-// app.use(errorHandler);
 
 app.listen(port, () => {
     console.log(`Listeing on port ${port}`);
